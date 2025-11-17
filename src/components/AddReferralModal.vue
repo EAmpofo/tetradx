@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from "vue";
-import { Dialog, Button, Select, InputText, Textarea, MultiSelect } from "primevue";
+import { Dialog, Button, Select, InputText, Textarea } from "primevue";
 import { useReferralStore } from "../stores/referrals.ts";
 import AppMultiSelect from "./AppMultiSelect.vue";
 
