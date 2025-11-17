@@ -1,0 +1,160 @@
+<script setup lang="ts">
+import { ref, computed, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
+import Drawer from 'primevue/drawer'
+import Button from 'primevue/button'
+import Avatar from 'primevue/avatar'
+import {useAuthStore} from "../stores/auth.ts";
+
+const router = useRouter()
+const authStore = useAuthStore()
+
+const sidebarVisible = ref(false)
+
+const user = computed(() => authStore.user)
+
+onMounted(() => {
+})
+
+const facilityLabel = computed(() => user.value?.facilities?.[0]?.name || '')
+
+const menuItems = computed(() =>{
+  if(user.value?.user_type?.toLowerCase()?.includes("practitioner")) {
+    return [
+      { label: 'Referrals', icon: 'pi pi-user', route: '/dashboard/referrals' },
+    ]
+  } else if(user.value?.user_type?.toLowerCase()?.includes("technician")) {
+    return [
+      { label: 'Lab dashboard', icon: 'pi pi-home', route: '/dashboard/labs' },
+    ]
+  }
+  return []
+})
+
+const handleLogout = () => {
+  authStore.logout()
+}
+
+const goToPage = (route: string) => {
+  router.push(route)
+}
+
+const toggleSidebar = () => {
+  sidebarVisible.value = !sidebarVisible.value
+}
+</script>
+
+<template>
+  <div class="min-h-screen bg-gray-50">
+    <!-- Header -->
+    <header class="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-40">
+      <div class="flex items-center justify-between px-4 py-3">
+        <div class="flex items-center gap-3">
+          <Button
+            icon="pi pi-bars"
+            severity="secondary"
+            text
+            @click="toggleSidebar"
+            class="md:hidden"
+          />
+          <h1 class="text-xl font-bold text-gray-800">Dashboard</h1>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <div class="hidden sm:block text-right">
+            <p class="text-sm font-semibold text-gray-800">{{ user?.full_name }}</p>
+            <p class="text-xs text-gray-500">{{ facilityLabel }}</p>
+          </div>
+          <Avatar
+            :label="user?.full_name?.charAt(0) || 'U'"
+            class="bg-blue-500 text-white"
+            shape="circle"
+          />
+        </div>
+      </div>
+    </header>
+
+    <div class="flex">
+      <!-- Sidebar for desktop -->
+      <aside
+        :class="[
+          'hidden md:flex md:flex-col bg-white border-r border-gray-200 transition-all duration-300',
+          sidebarVisible ? 'md:w-64' : 'md:w-0 md:overflow-hidden'
+        ]"
+      >
+        <nav class="flex-1 p-4 space-y-1">
+          <button
+            v-for="item in menuItems"
+            :key="item.label"
+            class="w-full flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors"
+            @click="goToPage(item.route)"
+          >
+            <i :class="item.icon"></i>
+            <span class="font-medium">{{ item.label }}</span>
+          </button>
+        </nav>
+
+        <div class="p-4 border-t border-gray-200">
+          <Button
+            label="Logout"
+            icon="pi pi-sign-out"
+            severity="danger"
+            text
+            class="w-full"
+            @click="handleLogout"
+          />
+        </div>
+      </aside>
+
+      <!-- Mobile Drawer -->
+      <Drawer v-model:visible="sidebarVisible" class="md:hidden">
+        <template #header>
+          <div class="flex items-center gap-3">
+            <Avatar
+              :label="user?.full_name?.charAt(0) || 'U'"
+              class="bg-blue-500 text-white"
+              shape="circle"
+            />
+            <div>
+              <p class="font-semibold text-gray-800">{{ user?.full_name }}</p>
+              <p class="text-xs text-gray-500">{{ facilityLabel }}</p>
+            </div>
+          </div>
+        </template>
+
+        <nav class="space-y-1">
+          <button
+            v-for="item in menuItems"
+            :key="item.label"
+            class="w-full flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors"
+            @click="goToPage(item.route)"
+          >
+            <i :class="item.icon"></i>
+            <span class="font-medium">{{ item.label }}</span>
+          </button>
+        </nav>
+
+        <template #footer>
+          <Button
+            label="Logout"
+            icon="pi pi-sign-out"
+            severity="danger"
+            text
+            class="w-full"
+            @click="handleLogout"
+          />
+        </template>
+      </Drawer>
+
+      <!-- Main Content -->
+      <main class="flex-1 p-6">
+        <div class="max-w-7xl mx-auto">
+          <router-view></router-view>
+        </div>
+      </main>
+    </div>
+  </div>
+</template>
+
+<style scoped>
+</style>
