@@ -11,7 +11,7 @@ interface ApiConfig {
 
 // Default API configuration
 const defaultConfig: ApiConfig = {
-    baseURL: 'http://16.170.166.38/api/',
+    baseURL: 'https://testingapi.tetradxtech.com/api/',
     timeout: 30000, // 30 seconds
     headers: {
         'Content-Type': 'application/json',
