@@ -41,7 +41,7 @@ const goToRegister = () => {
 </script>
 
 <template>
-  <div 
+  <div
     class="medical-background min-h-screen flex items-center justify-center p-4"
     :style="{ backgroundImage: `url(${backgroundImage})` }"
   >
@@ -103,10 +103,22 @@ const goToRegister = () => {
           <span class="text-gray-600">Don't have an account? </span>
           <button
             @click="goToRegister"
-            class="text-blue-600 hover:text-blue-800 font-semibold"
+            class="text-blue-600 hover:text-blue-800 font-semibold cursor-pointer"
           >
             Register
           </button>
+        </div>
+
+        <div class="mt-10 flex items-center justify-center">
+          <a 
+            href="https://www.youtube.com/watch?v=dQw4w9WgXcQ" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            class="text-blue-600 hover:text-blue-800 font-semibold flex items-center gap-2"
+          >
+            <i class="pi pi-play-circle"></i>
+            Take a tour
+          </a>
         </div>
       </template>
     </Card>
@@ -123,7 +135,7 @@ const goToRegister = () => {
 
 /* Dark overlay for better text readability */
 .medical-background::before {
-  content: '';
+  content: "";
   position: absolute;
   inset: 0;
   /* background: linear-gradient(135deg, rgba(102, 126, 234, 0.85) 0%, rgba(118, 75, 162, 0.85) 100%); */
@@ -132,11 +144,10 @@ const goToRegister = () => {
 
 /* Animated pattern overlay */
 .medical-background::after {
-  content: '';
+  content: "";
   position: absolute;
   inset: 0;
-  background-image:
-    repeating-linear-gradient(
+  background-image: repeating-linear-gradient(
       45deg,
       transparent,
       transparent 35px,
@@ -155,7 +166,8 @@ const goToRegister = () => {
 }
 
 @keyframes float {
-  0%, 100% {
+  0%,
+  100% {
     opacity: 0.5;
   }
   50% {
