@@ -111,7 +111,7 @@ const goToRegister = () => {
 
         <div class="mt-10 flex items-center justify-center">
           <a 
-            href="https://www.youtube.com/watch?v=dQw4w9WgXcQ" 
+            href="" 
             target="_blank" 
             rel="noopener noreferrer"
             class="text-blue-600 hover:text-blue-800 font-semibold flex items-center gap-2"
