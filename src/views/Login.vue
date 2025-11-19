@@ -103,7 +103,7 @@ const goToRegister = () => {
           <span class="text-gray-600">Don't have an account? </span>
           <button
             @click="goToRegister"
-            class="text-blue-600 hover:text-blue-800 font-semibold cursor-pointer"
+            class="text-blue-400 hover:text-blue-800 font-semibold cursor-pointer"
           >
             Register
           </button>
@@ -111,10 +111,10 @@ const goToRegister = () => {
 
         <div class="mt-10 flex items-center justify-center">
           <a 
-            href="" 
+            href="https://drive.google.com/file/d/1ct5yOdXV0V2XsyReSdqlym0hCFQaTGbt/view" 
             target="_blank" 
             rel="noopener noreferrer"
-            class="text-blue-600 hover:text-blue-800 font-semibold flex items-center gap-2"
+            class="text-blue-400 hover:text-blue-800 font-semibold flex items-center gap-2"
           >
             <i class="pi pi-play-circle"></i>
             Take a tour

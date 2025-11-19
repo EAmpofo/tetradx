@@ -218,7 +218,7 @@ const goToLogin = () => {
           <span class="text-gray-600">Already have an account? </span>
           <button
             @click="goToLogin"
-            class="text-blue-600 hover:text-blue-800 font-semibold cursor-pointer"
+            class="text-blue-400 hover:text-blue-800 font-semibold cursor-pointer"
           >
             Login
           </button>
