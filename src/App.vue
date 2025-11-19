@@ -1,5 +1,4 @@
 <script setup lang="ts">
-//0247481174
 import Toast from 'primevue/toast';
 import {onMounted} from "vue";
 import {useReferralStore} from "./stores/referrals.ts";
