@@ -12,7 +12,7 @@ import backgroundImage from "../assets/bg.jpg";
 
 const userTypes = [
   { label: "Medical Practitioner", value: "Medical Practitioner" },
-  { label: "Lab Technician", value: "Lab Technician" },
+  { label: "Laboratory", value: "Lab Technician" },
 ];
 
 const router = useRouter();
