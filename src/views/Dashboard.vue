@@ -1,138 +1,145 @@
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
-import { useRouter, useRoute } from 'vue-router'
-import Drawer from 'primevue/drawer'
-import Button from 'primevue/button'
-import Avatar from 'primevue/avatar'
-import {useAuthStore} from "../stores/auth.ts"
-import {useReferralStore} from "../stores/referrals.ts"
-import AddUserModal from "../components/AddUserModal.vue"
-import AddBranchModal from "../components/AddBranchModal.vue"
+import { ref, computed, onMounted } from "vue";
+import { useRouter, useRoute } from "vue-router";
+import Drawer from "primevue/drawer";
+import Button from "primevue/button";
+import Avatar from "primevue/avatar";
+import { useAuthStore } from "../stores/auth.ts";
+import { useReferralStore } from "../stores/referrals.ts";
+import AddUserModal from "../components/AddUserModal.vue";
+import AddBranchModal from "../components/AddBranchModal.vue";
 import { useToast } from "primevue";
 
-const router = useRouter()
-const route = useRoute()
-const authStore = useAuthStore()
-const referralStore = useReferralStore()
+const router = useRouter();
+const route = useRoute();
+const authStore = useAuthStore();
+const referralStore = useReferralStore();
 
-const sidebarVisible = ref(false)
-const showAddUserModal = ref(false)
-const showAddBranchModal = ref(false)
+const sidebarVisible = ref(false);
+const showAddUserModal = ref(false);
+const showAddBranchModal = ref(false);
 
-const user = computed(() => authStore.user)
+const user = computed(() => authStore.user);
 const toast = useToast();
 
-onMounted(() => {
-})
+onMounted(() => {});
 
-const facilityLabel = computed(() => user.value?.facilities?.[0]?.name || '')
+const facilityLabel = computed(() => user.value?.facilities?.[0]?.name || "");
 
 const showAdminActions = computed(() => {
-  return route.path === '/dashboard/labs' && user.value?.is_admin === true
-})
+  return route.path === "/dashboard/labs" && user.value?.is_admin === true;
+});
 
-const menuItems = computed(() =>{
-  if(user.value?.user_type?.toLowerCase()?.includes("practitioner")) {
+const menuItems = computed(() => {
+  if (user.value?.user_type?.toLowerCase()?.includes("practitioner")) {
     return [
-      { label: 'Referrals', icon: 'pi pi-address-book', route: '/dashboard/referrals' },
-    ]
-  } else if(user.value?.user_type?.toLowerCase()?.includes("technician")) {
+      {
+        label: "Referrals",
+        icon: "pi pi-address-book",
+        route: "/dashboard/referrals",
+      },
+    ];
+  } else if (user.value?.user_type?.toLowerCase()?.includes("technician")) {
     return [
-      { label: 'Lab dashboard', icon: 'pi pi-home', route: '/dashboard/labs' },
-    ]
+      { label: "Lab dashboard", icon: "pi pi-home", route: "/dashboard/labs" },
+    ];
   }
-  return []
-})
+  return [];
+});
 
 const handleLogout = () => {
-  authStore.logout()
-}
+  authStore.logout();
+};
 
 const goToPage = (route: string) => {
-  router.push(route)
-}
+  router.push(route);
+};
 
 const toggleSidebar = () => {
-  sidebarVisible.value = !sidebarVisible.value
-}
+  sidebarVisible.value = !sidebarVisible.value;
+};
 
 const handleAddUser = () => {
-  showAddUserModal.value = true
-  sidebarVisible.value = false
-}
+  showAddUserModal.value = true;
+  sidebarVisible.value = false;
+};
 
 const handleAddBranch = () => {
-  showAddBranchModal.value = true
-  sidebarVisible.value = false
-}
+  showAddBranchModal.value = true;
+  sidebarVisible.value = false;
+};
 
 const handleUserSubmit = async (data: any) => {
   try {
-    if (typeof referralStore.addNewLabTechnician !== 'function') {
-      const api = (await import('../services/api')).default
-      const response: any = await api.post('/medics/lab-technicians/add', {
+    if (typeof referralStore.addNewLabTechnician !== "function") {
+      const api = (await import("../services/api")).default;
+      const response: any = await api.post("/medics/lab-technicians/add", {
         full_name: data.full_name,
         phone_number: data.phone_number,
         branch_id: Number(data.branch_id),
-        password: data.password
-      })
-      if (response.status === 'success') {
+        password: data.password,
+      });
+      if (response.status === "success") {
         toast.add({
-            severity: "success",
-            summary: "Lab Technician Added",
-            detail: "The lab technician has been added successfully.",
-            life: 3000,
-          });
-        showAddUserModal.value = false
+          severity: "success",
+          summary: "Lab Technician Added",
+          detail: "The lab technician has been added successfully.",
+          life: 3000,
+        });
+        setTimeout(() => {
+          showAddUserModal.value = false;
+        }, 2000);
       }
     } else {
       await referralStore.addNewLabTechnician({
         full_name: data.full_name,
         phone_number: data.phone_number,
         branch_id: Number(data.branch_id),
-        password: data.password
-      })
-      showAddUserModal.value = false
+        password: data.password,
+      });
+      showAddUserModal.value = false;
     }
   } catch (error) {
-    console.error('Error adding user:', error)
-    
+    console.error("Error adding user:", error);
   }
-}
+};
 
 const handleBranchSubmit = async (data: any) => {
   try {
-    if (typeof referralStore.addFacilityBranch !== 'function') {
-      const api = (await import('../services/api')).default
-      const response: any = await api.post('/medics/branches/add', {
+    if (typeof referralStore.addFacilityBranch !== "function") {
+      const api = (await import("../services/api")).default;
+      const response: any = await api.post("/medics/branches/add", {
         name: data.name,
-      })
-      if (response.status === 'success') {
+      });
+      if (response.status === "success") {
         toast.add({
-            severity: "success",
-            summary: "Branch Added",
-            detail: "The branch has been added successfully.",
-            life: 3000,
-          });
-        showAddBranchModal.value = false
+          severity: "success",
+          summary: "Branch Added",
+          detail: "The branch has been added successfully.",
+          life: 3000,
+        });
+        setTimeout(() => {
+          showAddBranchModal.value = false;
+        }, 2000);
       }
     } else {
       await referralStore.addFacilityBranch({
         name: data.name,
-      })
-      showAddBranchModal.value = false
+      });
+      showAddBranchModal.value = false;
     }
   } catch (error) {
-    console.error('Error adding branch:', error)
+    console.error("Error adding branch:", error);
   }
-}
-
+};
 </script>
 
 <template>
   <div class="min-h-screen bg-gray-50">
     <!-- Header -->
-    <header class="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-40">
+    <header
+      class="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-40"
+    >
       <div class="flex items-center justify-between px-4 py-3">
         <div class="flex items-center gap-3">
           <Button
@@ -147,7 +154,9 @@ const handleBranchSubmit = async (data: any) => {
 
         <div class="flex items-center gap-3">
           <div class="hidden sm:block text-right">
-            <p class="text-sm font-semibold text-gray-800">{{ user?.full_name }}</p>
+            <p class="text-sm font-semibold text-gray-800">
+              {{ user?.full_name }}
+            </p>
             <p class="text-xs text-gray-500">{{ facilityLabel }}</p>
           </div>
           <Avatar
@@ -164,7 +173,7 @@ const handleBranchSubmit = async (data: any) => {
       <aside
         :class="[
           'hidden md:flex md:flex-col bg-white border-r border-gray-200 transition-all duration-300',
-          sidebarVisible ? 'md:w-64' : 'md:w-0 md:overflow-hidden'
+          sidebarVisible ? 'md:w-64' : 'md:w-0 md:overflow-hidden',
         ]"
       >
         <nav class="flex-1 p-4 space-y-1">
@@ -179,7 +188,10 @@ const handleBranchSubmit = async (data: any) => {
           </button>
 
           <!-- Divider -->
-          <div v-if="showAdminActions" class="border-t border-gray-200 my-3"></div>
+          <div
+            v-if="showAdminActions"
+            class="border-t border-gray-200 my-3"
+          ></div>
 
           <!-- Admin Actions -->
           <button
@@ -241,7 +253,10 @@ const handleBranchSubmit = async (data: any) => {
           </button>
 
           <!-- Divider -->
-          <div v-if="showAdminActions" class="border-t border-gray-200 my-3"></div>
+          <div
+            v-if="showAdminActions"
+            class="border-t border-gray-200 my-3"
+          ></div>
 
           <!-- Admin Actions -->
           <button
@@ -298,5 +313,4 @@ const handleBranchSubmit = async (data: any) => {
   </div>
 </template>
 
-<style scoped>
-</style>
+<style scoped></style>

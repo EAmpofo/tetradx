@@ -21,6 +21,7 @@ const fullName = ref('')
 const phoneNumber = ref('')
 const branch = ref('')
 const password = ref('')
+const loading = ref(false)
 
 const branches = computed(() => authStore.user?.branches || [])
 
@@ -45,6 +46,7 @@ const generatePassword = () => {
 }
 
 const handleSubmit = () => {
+  loading.value = true
   const userData = {
     full_name: fullName.value,
     phone_number: phoneNumber.value,
@@ -148,6 +150,7 @@ watch(() => props.visible, (newVal) => {
           type="submit"
           label="Add User"
           severity="success"
+          :loading="loading"
         />
       </div>
     </form>

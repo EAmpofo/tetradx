@@ -20,8 +20,10 @@ const resetForm = () => {
   branchName.value = "";
   location.value = "";
 };
+const loading = ref(false);
 
 const handleSubmit = () => {
+  loading.value = true;
   const branchData = {
     name: branchName.value,
   };
@@ -75,7 +77,12 @@ watch(
           severity="secondary"
           @click="handleClose"
         />
-        <Button type="submit" label="Add Branch" severity="success" />
+        <Button
+          type="submit"
+          label="Add Branch"
+          severity="success"
+          :loading="loading"
+        />
       </div>
     </form>
   </Dialog>
