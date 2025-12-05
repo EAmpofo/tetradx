@@ -3,6 +3,7 @@ import { computed, onMounted, ref, watch } from "vue";
 import { Dialog, Button, Select, InputText, Textarea } from "primevue";
 import { useReferralStore } from "../stores/referrals.ts";
 import AppMultiSelect from "./AppMultiSelect.vue";
+import type { Branch } from "../types";
 
 interface AddReferralModalProps {
   visible: boolean;
@@ -15,6 +16,7 @@ interface AddReferralModalEmits {
 
 interface ReferralFormData {
   facility_id: string | null;
+  branch_id: string | null;
   test_type_id: string | null;
   patient: string;
   clinical_notes?: string;
@@ -28,16 +30,19 @@ const referralStore = useReferralStore();
 
 const formData = ref<ReferralFormData>({
   facility_id: null,
+  branch_id: null,
   test_type_id: null,
   patient: "",
   clinical_notes: "",
   test_ids: [],
 });
 const loading = ref(false);
+const branches = ref<Branch[]>([]);
 
 const isFormValid = computed(
   () =>
     formData.value.facility_id &&
+    formData.value.branch_id &&
     formData.value.test_type_id &&
     formData.value.patient.trim().length > 0 &&
     formData.value.test_ids.length > 0
@@ -58,12 +63,12 @@ const handleSubmit = async () => {
      const payload: {
         tests: number[];
         test_type_id?: number;
-        facility_id: number;
+        branch_id: number;
         clinical_notes?: string;
         patient_full_name_or_id?: string;
         patient_id?: string;
       } = {
-        facility_id: Number(formData.value.facility_id),
+        branch_id: Number(formData.value.branch_id),
         tests: formData.value.test_ids,  
       };
       if (formData.value.clinical_notes) {
@@ -82,8 +87,10 @@ const handleSubmit = async () => {
     formData.value.patient = "";
     formData.value.clinical_notes = "";
     formData.value.facility_id = null;
+    formData.value.branch_id = null;
     formData.value.test_type_id = null;
     formData.value.test_ids = [];
+    branches.value = [];
     emit("updateDone");
     emit("update:visible", false);
   } catch (error) {
@@ -95,9 +102,17 @@ const handleSubmit = async () => {
 
 watch(
   () => formData.value.facility_id,
-  (newFacilityId) => {
+  async (newFacilityId) => {
+    formData.value.branch_id = null;
+    branches.value = [];
     if (newFacilityId) {
       referralStore.getAllTestTypes(Number(newFacilityId));
+      if (typeof referralStore.getFacilityBranches === 'function') {
+        const data = await referralStore.getFacilityBranches(Number(newFacilityId));
+        branches.value = data || [];
+      } else {
+        console.error('getFacilityBranches is not available in the store');
+      }
     }
   }
 );
@@ -120,24 +135,42 @@ onMounted(() => {
     :visible="props.visible"
     modal
     header="Add Referral"
-    :style="{ width: '500px' }"
+    :style="{ width: '600px' }"
     @update:visible="handleClose"
   >
     <div class="space-y-3">
-      <!-- Laboratory Select -->
-      <div class="flex flex-col gap-2">
-        <label for="laboratory" class="font-semibold text-gray-700"
-          >Laboratory</label
-        >
-        <Select
-          id="laboratory"
-          v-model="formData.facility_id"
-          :options="referralStore.facilities"
-          optionLabel="name"
-          optionValue="id"
-          placeholder="Select a laboratory"
-          class="w-full"
-        />
+      <div class="flex gap-4">
+
+        <!-- Laboratory Select -->
+        <div class="flex flex-col gap-2 w-1/2">
+          <label for="laboratory" class="font-semibold text-gray-700"
+            >Laboratory</label
+          >
+          <Select
+            id="laboratory"
+            v-model="formData.facility_id"
+            :options="referralStore.facilities"
+            optionLabel="name"
+            optionValue="id"
+            placeholder="Select a laboratory"
+            class="w-full"
+          />
+        </div>
+        <div class="flex flex-col gap-2  w-1/2">
+          <label for="branch" class="font-semibold text-gray-700"
+            >Branch</label
+          >
+          <Select
+            id="branch"
+            v-model="formData.branch_id"
+            :options="branches"
+            optionLabel="name"
+            optionValue="id"
+            placeholder="Select a branch"
+            :disabled="!formData.facility_id"
+            class="w-full"
+          />
+        </div>
       </div>
 
       <!-- Test Type Select -->

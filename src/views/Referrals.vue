@@ -79,7 +79,7 @@ onMounted(() => {
     </div>
 
     <!-- Dashboard Cards -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
       <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6">
         <div class="flex items-center justify-between mb-3 sm:mb-4">
           <h3 class="text-base sm:text-lg font-semibold text-gray-800">Total Referrals</h3>

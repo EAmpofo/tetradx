@@ -103,12 +103,6 @@ const getStatusColor = (status: string) => {
         <p class="text-gray-900">{{ props.referral.patient_name_or_id }}</p>
       </div>
 
-      <!-- Patient Unique ID -->
-<!--      <div class="flex flex-col gap-1">-->
-<!--        <label class="font-semibold text-gray-700">Patient Unique ID</label>-->
-<!--        <p class="text-gray-900">{{ props.referral.patient_unique_id }}</p>-->
-<!--      </div>-->
-
       <!-- Test Type -->
       <div class="flex flex-col gap-1 col-span-2">
         <label class="font-semibold text-gray-700">Tests</label>

@@ -38,7 +38,11 @@ export const useAuthStore = defineStore('auth', () => {
                 Cookies.set('authToken', response.data?.access_token)
                 Cookies.set('refreshToken', response?.data.refresh_token)
                 user.value = response.data?.user_data;
-                if(user.value?.user_type?.toLowerCase()?.includes("practitioner")) {
+                
+                // Check if user is new and redirect to change password
+                if(user.value?.is_new_user) {
+                    await router.push('/change-password')
+                } else if(user.value?.user_type?.toLowerCase()?.includes("practitioner")) {
                     await router.push('/dashboard/referrals')
                 } else if(user.value?.user_type?.toLowerCase()?.includes("technician")) {
                     await router.push('/dashboard/labs')
@@ -58,11 +62,40 @@ export const useAuthStore = defineStore('auth', () => {
         await router.push('/login')
     }
 
+    const changePassword = async (payload: {current_password: string, new_password: string, confirm_new_password: string}) => {
+        try {
+            const response = await api.post<{status: string}>("/auth/change-password", payload);
+            if(response.status === "success") {
+                toast.add({severity: "success", summary: "Password Change Successful", detail: "Your password has been changed successfully.", life: 3000});
+                
+                // Update user to no longer be new
+                if (user.value) {
+                    user.value.is_new_user = false;
+                }
+                
+                // Redirect based on user type
+                if(user.value?.user_type?.toLowerCase()?.includes("practitioner")) {
+                    await router.push('/dashboard/referrals')
+                } else if(user.value?.user_type?.toLowerCase()?.includes("technician")) {
+                    await router.push('/dashboard/labs')
+                } else {
+                    await router.push('/dashboard')
+                }
+            }
+        } catch (err) {
+            const error = err as AxiosError<{detail: string}>;
+            console.error("Error changing password:", error);
+            toast.add({severity: "error", summary: "Password Change Failed", detail: error.response?.data?.detail ?? "An error occurred while changing your password. Please try again.", life: 3000});
+            throw error;
+        }
+    }
+
     return {
         user,
         register,
         login,
-        logout
+        logout,
+        changePassword
     }
 }, {
     persist: {

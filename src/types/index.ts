@@ -5,6 +5,12 @@ export interface Facility {
     contact_number?: string | null;
 }
 
+export interface Branch {
+    id: number;
+    name: string;
+    location?: string;
+}
+
 export interface TestType {
     id: number;
     name: string;
@@ -47,7 +53,10 @@ export interface User {
     phone_number: string,
     user_type: string,
     date_joined: string,
-    facilities: Facility[]
+    is_new_user: boolean,
+    is_admin: boolean,
+    facilities: Facility[],
+    branches: Branch[]
 }
 
 export interface ReferralResponseData {

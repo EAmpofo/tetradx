@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import type { RouteRecordRaw } from 'vue-router'
 import Cookie from 'js-cookie';
+import { useAuthStore } from '../stores/auth';
 
 const routes: RouteRecordRaw[] = [
   {
@@ -16,6 +17,12 @@ const routes: RouteRecordRaw[] = [
     path: '/login',
     name: 'Login',
     component: () => import('../views/Login.vue')
+  },
+  {
+    path: '/change-password',
+    name: 'ChangePassword',
+    component: () => import('../views/ChangePassword.vue'),
+    meta: { requiresAuth: true }
   },
   {
     path: '/dashboard',
@@ -50,11 +57,20 @@ const router = createRouter({
 // Navigation guard for authentication
 router.beforeEach((to, _from, next) => {
     const token = Cookie.get('authToken');
+    const authStore = useAuthStore();
 
   if (to.meta.requiresAuth && !token) {
     next('/login')
   } else if ((to.path === '/login' || to.path === '/register') && token) {
-    next('/dashboard')
+    // Check if user is new and needs to change password
+    if (authStore.user?.is_new_user) {
+      next('/change-password')
+    } else {
+      next('/dashboard')
+    }
+  } else if (to.meta.requiresAuth && token && authStore.user?.is_new_user && to.path !== '/change-password') {
+    // Redirect new users to change password page if they try to access other routes
+    next('/change-password')
   } else {
     next()
   }
