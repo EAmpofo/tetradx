@@ -64,7 +64,7 @@ export const useAuthStore = defineStore('auth', () => {
 
     const changePassword = async (payload: {current_password: string, new_password: string, confirm_new_password: string}) => {
         try {
-            const response = await api.post<{status: string}>("/auth/change-password", payload);
+            const response = await api.post<{status: string}>("/medics/change-password", payload);
             if(response.status === "success") {
                 toast.add({severity: "success", summary: "Password Change Successful", detail: "Your password has been changed successfully.", life: 3000});
                 

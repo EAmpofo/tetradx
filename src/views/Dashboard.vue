@@ -97,7 +97,9 @@ const handleUserSubmit = async (data: any) => {
         branch_id: Number(data.branch_id),
         password: data.password,
       });
-      showAddUserModal.value = false;
+      setTimeout(() => {
+        showAddUserModal.value = false;
+      }, 2000);
     }
   } catch (error) {
     console.error("Error adding user:", error);
@@ -126,7 +128,9 @@ const handleBranchSubmit = async (data: any) => {
       await referralStore.addFacilityBranch({
         name: data.name,
       });
-      showAddBranchModal.value = false;
+      setTimeout(() => {
+        showAddBranchModal.value = false;
+      }, 2000);
     }
   } catch (error) {
     console.error("Error adding branch:", error);
