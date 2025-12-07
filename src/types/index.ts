@@ -55,7 +55,7 @@ export interface User {
     date_joined: string,
     is_new_user: boolean,
     is_admin: boolean,
-    facilities: Facility[],
+    facility: Facility,
     branches: Branch[]
 }
 

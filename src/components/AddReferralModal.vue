@@ -49,6 +49,12 @@ const isFormValid = computed(
 );
 
 const handleClose = () => {
+  formData.value.patient = "";
+  formData.value.clinical_notes = "";
+  formData.value.facility_id = null;
+  formData.value.branch_id = null;
+  formData.value.test_type_id = null;
+  formData.value.test_ids = [];
   emit("update:visible", false);
 };
 

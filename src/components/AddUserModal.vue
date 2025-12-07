@@ -1,74 +1,104 @@
 <script setup lang="ts">
-import { ref, watch, computed } from 'vue'
-import Dialog from 'primevue/dialog'
-import InputText from 'primevue/inputtext'
-import Select from 'primevue/select'
-import Button from 'primevue/button'
-import { useAuthStore } from '../stores/auth'
+import { ref, watch, computed } from "vue";
+import Dialog from "primevue/dialog";
+import InputText from "primevue/inputtext";
+import Select from "primevue/select";
+import Button from "primevue/button";
+import { useAuthStore } from "../stores/auth";
+import { useReferralStore } from "../stores/referrals";
+import type { Branch } from "../types";
 
 const props = defineProps<{
-  visible: boolean
-}>()
+  visible: boolean;
+}>();
 
 const emit = defineEmits<{
-  'update:visible': [value: boolean]
-  'submit': [data: any]
-}>()
+  "update:visible": [value: boolean];
+  submit: [data: any];
+}>();
 
-const authStore = useAuthStore()
+const authStore = useAuthStore();
+const referralStore = useReferralStore();
 
-const fullName = ref('')
-const phoneNumber = ref('')
-const branch = ref('')
-const password = ref('')
-const loading = ref(false)
+defineExpose({
+  setLoading: (value: boolean) => {
+    loading.value = value;
+  },
+});
 
-const branches = computed(() => authStore.user?.branches || [])
+const fullName = ref("");
+const phoneNumber = ref("");
+const branch = ref("");
+const password = ref("");
+const loading = ref(false);
+const branches = ref<Branch[]>([]);
 
+const facilityId = computed(() => authStore.user?.facility?.id);
 
+const fetchBranches = async () => {
+  if (facilityId.value) {
+    try {
+      const data = await referralStore.getFacilityBranches(facilityId.value);
+      branches.value = data || [];
+    } catch (error) {
+      console.error("Error fetching branches:", error);
+      branches.value = [];
+    }
+  } else {
+    console.log("No facilityId available");
+  }
+};
 
 const resetForm = () => {
-  fullName.value = ''
-  phoneNumber.value = ''
-  branch.value = ''
-  password.value = ''
-}
+  fullName.value = "";
+  phoneNumber.value = "";
+  branch.value = "";
+  password.value = "";
+};
 
 const generatePassword = () => {
-  const length = 12
-  const charset = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*'
-  let generatedPassword = ''
+  const length = 11;
+  const charset =
+    "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!#$%^&*";
+  let generatedPassword = "";
   for (let i = 0; i < length; i++) {
-    const randomIndex = Math.floor(Math.random() * charset.length)
-    generatedPassword += charset[randomIndex]
+    const randomIndex = Math.floor(Math.random() * charset.length);
+    generatedPassword += charset[randomIndex];
   }
-  password.value = generatedPassword
-}
+  const atPosition = Math.floor(Math.random() * (length + 1));
+  generatedPassword = generatedPassword.slice(0, atPosition) + '@' + generatedPassword.slice(atPosition);
+  password.value = generatedPassword;
+};
 
 const handleSubmit = () => {
-  loading.value = true
+  loading.value = true;
   const userData = {
     full_name: fullName.value,
     phone_number: phoneNumber.value,
     branch_id: branch.value,
-    password: password.value
-  }
-  
-  emit('submit', userData)
-  resetForm()
-  emit('update:visible', false)
-}
+    password: password.value,
+  };
+
+  emit("submit", userData);
+  resetForm();
+  emit("update:visible", false);
+};
 
 const handleClose = () => {
-  resetForm()
-  emit('update:visible', false)
-}
+  resetForm();
+  emit("update:visible", false);
+};
 
-watch(() => props.visible, (newVal) => {
-  if (!newVal) {
-    resetForm()
+watch(
+  () => props.visible,
+  async (newVal) => {
+    if (newVal) {
+      await fetchBranches();
+    } else {
+      resetForm();
+    }
   }
-})
+);
 </script>
 
 <template>
@@ -81,7 +111,9 @@ watch(() => props.visible, (newVal) => {
   >
     <form @submit.prevent="handleSubmit" class="space-y-4 mt-4">
       <div class="flex flex-col gap-2">
-        <label for="fullName" class="font-semibold text-gray-700">Full Name</label>
+        <label for="fullName" class="font-semibold text-gray-700"
+          >Full Name</label
+        >
         <InputText
           id="fullName"
           v-model="fullName"
@@ -91,9 +123,10 @@ watch(() => props.visible, (newVal) => {
         />
       </div>
 
-
       <div class="flex flex-col gap-2">
-        <label for="phone" class="font-semibold text-gray-700">Phone Number</label>
+        <label for="phone" class="font-semibold text-gray-700"
+          >Phone Number</label
+        >
         <InputText
           id="phone"
           v-model="phoneNumber"
@@ -119,7 +152,9 @@ watch(() => props.visible, (newVal) => {
       </div>
 
       <div class="flex flex-col gap-2">
-        <label for="password" class="font-semibold text-gray-700">Password</label>
+        <label for="password" class="font-semibold text-gray-700"
+          >Password</label
+        >
         <div class="flex gap-2">
           <InputText
             id="password"

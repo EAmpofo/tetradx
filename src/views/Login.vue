@@ -111,7 +111,7 @@ const goToRegister = () => {
 
         <div class="mt-10 flex items-center justify-center">
           <a 
-            href="https://drive.google.com/file/d/1ct5yOdXV0V2XsyReSdqlym0hCFQaTGbt/view" 
+            href="https://drive.google.com/file/d/1vfD1lTaOFkP6tKC7dn8w5K4onf3A4R8T/view" 
             target="_blank" 
             rel="noopener noreferrer"
             class="text-blue-400 hover:text-blue-800 font-semibold flex items-center gap-2"

@@ -18,13 +18,14 @@ const referralStore = useReferralStore();
 const sidebarVisible = ref(false);
 const showAddUserModal = ref(false);
 const showAddBranchModal = ref(false);
+const addUserModalRef = ref<any>(null);
 
 const user = computed(() => authStore.user);
 const toast = useToast();
 
 onMounted(() => {});
 
-const facilityLabel = computed(() => user.value?.facilities?.[0]?.name || "");
+const facilityLabel = computed(() => user.value?.facility?.name || "");
 
 const showAdminActions = computed(() => {
   return route.path === "/dashboard/labs" && user.value?.is_admin === true;
@@ -88,6 +89,7 @@ const handleUserSubmit = async (data: any) => {
         });
         setTimeout(() => {
           showAddUserModal.value = false;
+          addUserModalRef.value?.setLoading(false);
         }, 2000);
       }
     } else {
@@ -99,10 +101,12 @@ const handleUserSubmit = async (data: any) => {
       });
       setTimeout(() => {
         showAddUserModal.value = false;
+        addUserModalRef.value?.setLoading(false);
       }, 2000);
     }
   } catch (error) {
     console.error("Error adding user:", error);
+    addUserModalRef.value?.setLoading(false);
   }
 };
 
@@ -304,6 +308,7 @@ const handleBranchSubmit = async (data: any) => {
 
     <!-- Modals -->
     <AddUserModal
+      ref="addUserModalRef"
       :visible="showAddUserModal"
       @update:visible="showAddUserModal = $event"
       @submit="handleUserSubmit"
